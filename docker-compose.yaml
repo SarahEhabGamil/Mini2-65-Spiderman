@@ -1,0 +1,73 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      spring.datasource.url: jdbc:postgresql://localhost:5432/Spiderman_65
+      spring.datasource.username: postgres
+      spring.datasource.password: 1234
+      spring.data.mongodb.uri: mongodb://root:example@127.0.0.1:27017/Spiderman_65?authSource=admin
+      spring.data.mongodb.database: Spiderman_65
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - mongo
+    restart: always
+
+  postgres:
+    image: postgres
+    container_name: postgres_cont
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_USER: postgres
+      POSTGRES_DB: Spiderman_65
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:8.0
+    container_name: pgadmin_cont
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@example.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+  # MongoDB
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: Spiderman_65
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "9000:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
+volumes:
+  postgres_data:
+  mongo_data:
+
+
+
