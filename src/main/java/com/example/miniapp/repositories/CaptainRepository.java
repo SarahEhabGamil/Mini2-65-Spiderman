@@ -10,8 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface CaptainRepository  extends JpaRepository<Captain, Long> {
+    @Query(value = "SELECT * FROM captains WHERE avg_rating_score > :ratingThreshold", nativeQuery = true)
     List<Captain> findByAvgRatingScoreGreaterThan(Double ratingThreshold);
 
+    @Query(value = "SELECT * FROM captains WHERE license_number = :licenseNumber LIMIT 1", nativeQuery = true)
     Optional<Captain> findByLicenseNumber(String licenseNumber);
-
 }
