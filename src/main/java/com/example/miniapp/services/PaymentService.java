@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PaymentService {
@@ -39,10 +40,8 @@ public class PaymentService {
     }
 
     public void deletePayment(Long id) {
-        Payment existingPayment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found with id: " + id));
-
-        paymentRepository.delete(existingPayment);
+        Optional<Payment> existingPayment = paymentRepository.findById(id);
+        existingPayment.ifPresent(paymentRepository::delete);
     }
 
 

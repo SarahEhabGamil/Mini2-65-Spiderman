@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TripService {
@@ -41,11 +42,10 @@ public class TripService {
     }
 
     public void deleteTrip(Long id) {
-        Trip existingTrip = tripRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trip not found with id: " + id));
-
-        tripRepository.delete(existingTrip);
+        Optional<Trip> existingTrip = tripRepository.findById(id);
+        existingTrip.ifPresent(tripRepository::delete);
     }
+
     public List<Trip> findTripsWithinDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         return tripRepository.findByTripDateBetween(startDate, endDate);
     }
@@ -53,6 +53,4 @@ public class TripService {
     public List<Trip> findTripsByCaptainId(Long captainId) {
         return tripRepository.findByCaptainId(captainId);
     }
-
-
 }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class RatingService {
@@ -16,26 +18,29 @@ public class RatingService {
     }
 
     public Rating addRating(Rating rating) {
-        return ratingRepository.save(rating);
+     return ratingRepository.save(rating);
     }
 
 
     public Rating updateRating(String id, Rating updatedRating) {
-        Rating existingRating = ratingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id: " + id));
-
-        existingRating.setScore(updatedRating.getScore());
-        existingRating.setComment(updatedRating.getComment());
-        existingRating.setRatingDate(updatedRating.getRatingDate());
-
-        return ratingRepository.save(existingRating);
+        return ratingRepository.findById(id)
+                .map(existing -> {
+                    existing.setScore(updatedRating.getScore());
+                    existing.setComment(updatedRating.getComment());
+                    existing.setRatingDate(updatedRating.getRatingDate());
+                    return ratingRepository.save(existing);
+                })
+                .orElseGet(() -> {
+                    updatedRating.setId(id);
+                    return ratingRepository.save(updatedRating);
+                });
     }
 
-    public void deleteRating(String id) {
-        Rating existingRating = ratingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rating not found with id: " + id));
 
-        ratingRepository.delete(existingRating);
+    public void deleteRating(String id) {
+        Optional<Rating> existingRating = ratingRepository.findById(id);
+        existingRating.ifPresent(ratingRepository::delete);
+
     }
 
     public List<Rating> getRatingsByEntity(Long entityId, String entityType) {

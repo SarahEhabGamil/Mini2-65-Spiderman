@@ -1,8 +1,8 @@
 package com.example.miniapp.models;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import org.springframework.data.annotation.Id;
 import java.time.LocalDateTime;
 
 
@@ -11,6 +11,7 @@ public class Rating {
 
     @Id
     private String id;
+
     private Long entityId;
     private String entityType;
     private Integer score;

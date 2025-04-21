@@ -3,6 +3,8 @@ package com.example.miniapp.controllers;
 import com.example.miniapp.models.Rating;
 import com.example.miniapp.services.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +24,15 @@ public class RatingController {
     }
 
     @PutMapping("/update/{id}")
-    public Rating updateRating(@PathVariable String id, @RequestBody Rating updatedRating) {
-        return ratingService.updateRating(id, updatedRating);
+    public ResponseEntity<?> updateRating(@PathVariable String id, @RequestBody Rating updatedRating) {
+        try {
+            Rating result = ratingService.updateRating(id, updatedRating);
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
+
 
     @DeleteMapping("/delete/{id}")
     public String deleteRating(@PathVariable String id) {

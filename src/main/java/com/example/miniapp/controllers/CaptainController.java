@@ -3,6 +3,7 @@ package com.example.miniapp.controllers;
 import com.example.miniapp.models.Captain;
 import com.example.miniapp.services.CaptainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,8 +36,13 @@ public class CaptainController {
     }
 
     @GetMapping("/filterByLicenseNumber")
-    public Captain getCaptainByLicenseNumber(@RequestParam String licenseNumber) {
-        return captainService.getCaptainByLicenseNumber(licenseNumber);
+    public ResponseEntity<Captain> getCaptainByLicenseNumber(@RequestParam String licenseNumber) {
+        try {
+            Captain captain = captainService.getCaptainByLicenseNumber(licenseNumber);
+            return ResponseEntity.ok(captain);
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok(null);
+        }
     }
 
 
