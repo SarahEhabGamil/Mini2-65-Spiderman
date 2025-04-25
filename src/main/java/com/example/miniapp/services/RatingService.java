@@ -21,7 +21,6 @@ public class RatingService {
      return ratingRepository.save(rating);
     }
 
-
     public Rating updateRating(String id, Rating updatedRating) {
         return ratingRepository.findById(id)
                 .map(existing -> {
@@ -30,10 +29,7 @@ public class RatingService {
                     existing.setRatingDate(updatedRating.getRatingDate());
                     return ratingRepository.save(existing);
                 })
-                .orElseGet(() -> {
-                    updatedRating.setId(id);
-                    return ratingRepository.save(updatedRating);
-                });
+                .orElseThrow(() -> new RuntimeException("Rating with ID " + id + " not found"));
     }
 
 
